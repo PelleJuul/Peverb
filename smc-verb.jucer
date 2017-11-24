@@ -13,18 +13,28 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0">
   <MAINGROUP id="D1RdPw" name="smc-verb">
     <GROUP id="{61FA2086-5D9F-B47E-0D66-9F489CC1699C}" name="Source">
-      <FILE id="gdGZHT" name="SAllPassFilter.cpp" compile="1" resource="0"
-            file="Source/SAllPassFilter.cpp"/>
-      <FILE id="HHEpQP" name="SAllPassFilter.h" compile="0" resource="0"
-            file="Source/SAllPassFilter.h"/>
-      <FILE id="wvwCLC" name="NestedAllPass.cpp" compile="1" resource="0"
-            file="Source/NestedAllPass.cpp"/>
-      <FILE id="mYlBnx" name="NestedAllPass.h" compile="0" resource="0" file="Source/NestedAllPass.h"/>
-      <FILE id="LQeIS6" name="AllPassFilter.cpp" compile="1" resource="0"
-            file="Source/AllPassFilter.cpp"/>
-      <FILE id="QEQQIp" name="AllPassFilter.h" compile="0" resource="0" file="Source/AllPassFilter.h"/>
-      <FILE id="gYZWIj" name="DelayLine.cpp" compile="1" resource="0" file="Source/DelayLine.cpp"/>
-      <FILE id="DayZ3w" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
+      <FILE id="wBWuYX" name="TestAllPass.cpp" compile="1" resource="0" file="Source/TestAllPass.cpp"/>
+      <FILE id="onlBAE" name="TestAllPass.h" compile="0" resource="0" file="Source/TestAllPass.h"/>
+      <FILE id="W4jQws" name="TestVerb.cpp" compile="1" resource="0" file="Source/TestVerb.cpp"/>
+      <FILE id="obrNC6" name="TestVerb.h" compile="0" resource="0" file="Source/TestVerb.h"/>
+      <GROUP id="{562C6EC9-1280-7117-DCAA-86891D5EF20D}" name="Nodes">
+        <FILE id="ho0q60" name="Chain.cpp" compile="1" resource="0" file="Source/Chain.cpp"/>
+        <FILE id="bUplXi" name="Chain.h" compile="0" resource="0" file="Source/Chain.h"/>
+        <FILE id="LQeIS6" name="AllPass.cpp" compile="1" resource="0" file="Source/AllPass.cpp"/>
+        <FILE id="QEQQIp" name="AllPass.h" compile="0" resource="0" file="Source/AllPass.h"/>
+        <FILE id="xAqIBq" name="Inlet.cpp" compile="1" resource="0" file="Source/Inlet.cpp"/>
+        <FILE id="g0xvXH" name="Inlet.h" compile="0" resource="0" file="Source/Inlet.h"/>
+        <FILE id="om295q" name="Outlet.cpp" compile="1" resource="0" file="Source/Outlet.cpp"/>
+        <FILE id="NBhELV" name="Outlet.h" compile="0" resource="0" file="Source/Outlet.h"/>
+        <FILE id="HlqyIo" name="Gain.cpp" compile="1" resource="0" file="Source/Gain.cpp"/>
+        <FILE id="H1NhMQ" name="Gain.h" compile="0" resource="0" file="Source/Gain.h"/>
+        <FILE id="eJ23JM" name="Sum.cpp" compile="1" resource="0" file="Source/Sum.cpp"/>
+        <FILE id="YfXc1d" name="Sum.h" compile="0" resource="0" file="Source/Sum.h"/>
+        <FILE id="Cqom4z" name="Node.cpp" compile="1" resource="0" file="Source/Node.cpp"/>
+        <FILE id="c3KBhK" name="Node.h" compile="0" resource="0" file="Source/Node.h"/>
+        <FILE id="gYZWIj" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
+        <FILE id="DayZ3w" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>
+      </GROUP>
       <FILE id="vhCwqZ" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="qA8aLY" name="PluginProcessor.h" compile="0" resource="0"

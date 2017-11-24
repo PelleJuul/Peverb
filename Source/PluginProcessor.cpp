@@ -10,6 +10,10 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "AllPass.h"
+#include "Inlet.h"
+#include "Outlet.h"
+#include "Chain.h"
 
 
 //==============================================================================
@@ -26,7 +30,8 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #else
     :
 #endif
-    parameters(*this, nullptr), nestedAllPass(0.2)
+    parameters(*this, nullptr), dryGain(0.0), wetGain(1.0), directGain(0.5), feedbackGain(-0.5), outGain(1.0 - 0.5 * 0.5),
+    preDelay(0.03)
 {
     parameters.createAndAddParameter("gain",
                                      "gain", "",
@@ -47,11 +52,15 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                                      nullptr,
                                      nullptr);
     
-    nestedAllPass.addAllPass(0.081 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.073 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.062 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.051 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.043 * 44100, 0.7);
+    Allpass *allpassA = new Allpass(0.1, 0.7);
+    // Allpass *allpassB = new Allpass(0.3, 0.7);
+    // Allpass *allpassC = new Allpass(0.09, 0.2);
+    // Allpass *allpassD = new Allpass(0.027, 0.2);
+    // Chain allpasses = *allpassA > *allpassB > *allpassC > *allpassD;
+    
+    inlet >> inSum >> *allpassA >> outGain >> outSum >> outlet;
+    inlet >> directGain >> outSum;
+    *allpassA >> feedbackGain >> inSum;
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -157,6 +166,31 @@ bool NewProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 }
 #endif
 
+/*
+float lastAllpassed = 0;
+Allpass *allpassA = new Allpass(0.1, 0.7);
+Allpass *allpassB = new Allpass(0.03, 0.6);
+Allpass *allpassC = new Allpass(0.01, 0.5);
+// Allpass *allpassD = new Allpass(0.003, 0.4);
+*/
+ 
+float NewProjectAudioProcessor::process(float t, float x)
+{
+    /*
+    float g = 0.2;
+    float inSum = x + lastAllpassed;
+    
+    float allpassed = inSum;
+    allpassed = allpassA->alone(t, allpassed);
+    // allpassed = allpassD->alone(t, allpassed);
+    
+    float outSum = x * (-g) + allpassed * (1 - g * g);
+    lastAllpassed = allpassed * g;
+    return outSum;
+     */
+    return testVerb.process(x);
+}
+
 void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
@@ -168,13 +202,15 @@ void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 
     float* channelData = buffer.getWritePointer (0);
     
-    for (int i = 0; i < buffer.getNumSamples(); ++ i) {
-        channelData[i] = process(channelData[i]);
-    }
+    float dryWetRatio = *parameters.getRawParameterValue("balance");
+    wetGain.setGain(sqrt(dryWetRatio));
+    dryGain.setGain(sqrt(1.0 - dryWetRatio));
     
-    nestedAllPass.setScale(*parameters.getRawParameterValue("delay"));
-    nestedAllPass.setInnerGain(*parameters.getRawParameterValue("gain"));
-    nestedAllPass.setGain(*parameters.getRawParameterValue("balance"));
+    for (int i = 0; i < buffer.getNumSamples(); ++ i) {
+        // float x = outlet.run(0, channelData[i]);
+        float x = process(0, channelData[i]);
+        channelData[i] = x;
+    }
     
     for (int channel = 1; channel < totalNumInputChannels; ++channel)
     {
@@ -185,11 +221,6 @@ void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
             channelData[i] = channelZeroData[i];
         }
     }
-}
-
-float NewProjectAudioProcessor::process(float x)
-{
-    return nestedAllPass.process(x);
 }
 
 //==============================================================================

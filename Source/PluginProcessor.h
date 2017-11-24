@@ -11,9 +11,10 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "AllPassFilter.h"
-#include "SAllPassFilter.h"
-#include "NestedAllPass.h"
+#include "Inlet.h"
+#include "Outlet.h"
+#include "AllPass.h"
+#include "TestVerb.h"
 
 
 //==============================================================================
@@ -60,9 +61,19 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    float process(float x);
+    Inlet inlet;
+    Outlet outlet;
+    Sum inSum;
+    Sum outSum;
+    Delay preDelay;
+    Gain dryGain;
+    Gain wetGain;
+    Gain directGain;
+    Gain outGain;
+    Gain feedbackGain;
     AudioProcessorValueTreeState parameters;
-    NestedAllPass nestedAllPass;
+    float process(float t, float x);
+    TestVerb testVerb;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)

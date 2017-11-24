@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    SAllPass.h
-    Created: 31 Oct 2017 12:51:22pm
+    Inlet.h
+    Created: 22 Nov 2017 9:29:33pm
     Author:  Pelle Juul Christensen
 
   ==============================================================================
@@ -10,16 +10,10 @@
 
 #pragma once
 
-#include "DelayLine.h"
+#include "Node.h"
 
-class SAllPassFilter
+class Inlet : public Node
 {
 public:
-    SAllPassFilter(int delay, float g);
-    float process(float x);
-    
-private:
-    float g;
-    int delay;
-    DelayLine delayLine;
+    virtual float process(float t, float x) override;
 };

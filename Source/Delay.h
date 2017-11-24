@@ -10,20 +10,22 @@
 
 #pragma once
 
+#include "Node.h"
 #include <vector>
 
-class DelayLine
+class Delay : public Node
 {
 public:
-    DelayLine();
-    void setDelay(float newSize);
-    void setDelaySeconds(float newSize);
-    void write(float sample);
-    float read(float t) const;
-    void clear();
+    Delay(float seconds);
+    void setDelay(float seconds);
+    virtual float process(float t, float x) override;
     
+    void write(float sample);
+    float read();
 private:
     int index;
-    float sampleRate;
+    int size;
     std::vector<float> samples;
+    
+    
 };
