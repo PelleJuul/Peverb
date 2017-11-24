@@ -19,7 +19,7 @@ DelayLine::DelayLine() : samples()
 
 void DelayLine::setDelay(float newSize)
 {
-    samples.resize(newSize, 0);
+    samples.resize(newSize * 44100, 0);
 }
 
 void DelayLine::setDelaySeconds(float newSize)

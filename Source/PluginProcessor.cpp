@@ -26,32 +26,34 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #else
     :
 #endif
-    parameters(*this, nullptr), nestedAllPass(0.2)
+    parameters(*this, nullptr), nestedAllPass(0.1)
 {
-    parameters.createAndAddParameter("gain",
-                                     "gain", "",
-                                     NormalisableRange<float>(0, 1, 0.001),
-                                     0.7,
-                                     nullptr,
-                                     nullptr);
     parameters.createAndAddParameter("delay",
                                      "delay", "",
                                      NormalisableRange<float>(0.01, 1, 0.0001),
-                                     0.5,
-                                     nullptr,
-                                     nullptr);
-    parameters.createAndAddParameter("balance",
-                                     "balance", "",
-                                     NormalisableRange<float>(0.00, 1, 0.0001),
-                                     0.7,
+                                     1.0,
                                      nullptr,
                                      nullptr);
     
-    nestedAllPass.addAllPass(0.081 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.073 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.062 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.051 * 44100, 0.7);
-    nestedAllPass.addAllPass(0.043 * 44100, 0.7);
+    parameters.createAndAddParameter("gain",
+                                     "gain", "",
+                                     NormalisableRange<float>(0, 1, 0.001),
+                                     0.5,
+                                     nullptr,
+                                     nullptr);
+    
+    parameters.createAndAddParameter("balance",
+                                     "balance", "",
+                                     NormalisableRange<float>(0.00, 1, 0.0001),
+                                     0.5,
+                                     nullptr,
+                                     nullptr);
+    
+    nestedAllPass.addAllPass(0.081, 0.2);
+    nestedAllPass.addAllPass(0.073, 0.3);
+    nestedAllPass.addAllPass(0.062, 0.4);
+    nestedAllPass.addAllPass(0.051, 0.5);
+    nestedAllPass.addAllPass(0.043, 0.6);
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -173,7 +175,7 @@ void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     }
     
     nestedAllPass.setScale(*parameters.getRawParameterValue("delay"));
-    nestedAllPass.setInnerGain(*parameters.getRawParameterValue("gain"));
+    // nestedAllPass.setInnerGain(*parameters.getRawParameterValue("gain"));
     nestedAllPass.setGain(*parameters.getRawParameterValue("balance"));
     
     for (int channel = 1; channel < totalNumInputChannels; ++channel)
