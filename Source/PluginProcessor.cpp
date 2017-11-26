@@ -10,6 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "LateReverb.h"
 
 
 //==============================================================================
@@ -26,7 +27,7 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #else
     :
 #endif
-    parameters(*this, nullptr), nestedAllPass(0.1)
+    parameters(*this, nullptr)
 {
     parameters.createAndAddParameter("delay",
                                      "delay", "",
@@ -48,12 +49,6 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                                      0.5,
                                      nullptr,
                                      nullptr);
-    
-    nestedAllPass.addAllPass(0.081, 0.2);
-    nestedAllPass.addAllPass(0.073, 0.3);
-    nestedAllPass.addAllPass(0.062, 0.4);
-    nestedAllPass.addAllPass(0.051, 0.5);
-    nestedAllPass.addAllPass(0.043, 0.6);
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -170,28 +165,30 @@ void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 
     float* channelData = buffer.getWritePointer (0);
     
-    for (int i = 0; i < buffer.getNumSamples(); ++ i) {
-        channelData[i] = process(channelData[i]);
-    }
-    
-    nestedAllPass.setScale(*parameters.getRawParameterValue("delay"));
-    // nestedAllPass.setInnerGain(*parameters.getRawParameterValue("gain"));
-    nestedAllPass.setGain(*parameters.getRawParameterValue("balance"));
-    
-    for (int channel = 1; channel < totalNumInputChannels; ++channel)
-    {
-        float *channelData = buffer.getWritePointer (channel);
-        float *channelZeroData = buffer.getWritePointer(0);
+    for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+        float mix = 0;
         
-        for (int i = 0; i < buffer.getNumSamples(); ++ i) {
-            channelData[i] = channelZeroData[i];
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
+        {
+            mix += buffer.getSample(channel, sample);
+        }
+        
+        float l = lateReverb.processLeft(mix);
+        float r = lateReverb.processRight(mix);
+        lateReverb.crossower();
+        
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
+        {
+            if (channel % 2 == 0)
+                buffer.setSample(channel, sample, l);
+            else
+                buffer.setSample(channel, sample, r);
         }
     }
-}
-
-float NewProjectAudioProcessor::process(float x)
-{
-    return nestedAllPass.process(x);
+    
+    // nestedAllPass.setScale(*parameters.getRawParameterValue("delay"));
+    // nestedAllPass.setInnerGain(*parameters.getRawParameterValue("gain"));
+    // nestedAllPass.setGain(*parameters.getRawParameterValue("balance"));
 }
 
 //==============================================================================

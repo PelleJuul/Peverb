@@ -13,6 +13,8 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0">
   <MAINGROUP id="D1RdPw" name="smc-verb">
     <GROUP id="{61FA2086-5D9F-B47E-0D66-9F489CC1699C}" name="Source">
+      <FILE id="iXKq5O" name="LateReverb.cpp" compile="1" resource="0" file="Source/LateReverb.cpp"/>
+      <FILE id="WoHNmB" name="LateReverb.h" compile="0" resource="0" file="Source/LateReverb.h"/>
       <FILE id="gdGZHT" name="SAllPassFilter.cpp" compile="1" resource="0"
             file="Source/SAllPassFilter.cpp"/>
       <FILE id="HHEpQP" name="SAllPassFilter.h" compile="0" resource="0"

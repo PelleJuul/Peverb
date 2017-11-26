@@ -32,12 +32,7 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& processor;
     AudioProcessorValueTreeState& valueTreeState;
-    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> decaySliderAttachment;
-    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
-    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> balanceSliderAttachment;
-    Slider decaySlider;
-    Slider gainSlider;
-    Slider balanceSlider;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
 };

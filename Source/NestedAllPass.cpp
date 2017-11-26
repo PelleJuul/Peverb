@@ -8,13 +8,23 @@
   ==============================================================================
 */
 
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "NestedAllPass.h"
 #include "AllPassFilter.h"
+
+NestedAllPass::NestedAllPass() : NestedAllPass(0.2)
+{
+    
+}
 
 NestedAllPass::NestedAllPass(float g)
 {
     this->g = g;
-    lastY = 0;
+    feedback = 0;
+    IIRCoefficients coeffA = IIRCoefficients::makeLowPass(44100, 2000, 0.2);
+    feedbackFilter.setCoefficients(coeffA);
+    IIRCoefficients coeffB = IIRCoefficients::makeLowPass(44100, 8000, 0.5);
+    inputFilter.setCoefficients(coeffB);
 }
 
 void NestedAllPass::addAllPass(float delay, float g)
@@ -44,9 +54,9 @@ void NestedAllPass::setGain(float gain)
 
 float NestedAllPass::process(float x)
 {
-    float direct = x * (-g);
-    
-    float sum2 = x + lastY * g;
+    float filtered = inputFilter.processSingleSampleRaw(x);
+    float direct = filtered * (-g);
+    float sum2 = x + feedback;
     float allPassed = sum2;
     
     for (AllPassFilter *ap : allPasses) {
@@ -54,6 +64,6 @@ float NestedAllPass::process(float x)
     }
     
     float sum1 = direct + allPassed;
-    lastY = sum1;
+    feedback = feedbackFilter.processSingleSampleRaw(sum1) * g;
     return sum1;
 }

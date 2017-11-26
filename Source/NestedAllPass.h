@@ -10,11 +10,15 @@
 
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "AllPassFilter.h"
 
 class NestedAllPass
 {
 public:
+    float feedback;
+    
+    NestedAllPass();
     NestedAllPass(float g);
     void addAllPass(float delay, float g);
     float process(float x);
@@ -25,6 +29,8 @@ public:
     
 private:
     float g;
-    float lastY;
+    
     std::vector<AllPassFilter*> allPasses;
+    IIRFilter feedbackFilter;
+    IIRFilter inputFilter;
 };

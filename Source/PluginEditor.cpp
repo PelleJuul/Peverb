@@ -16,6 +16,7 @@
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p, AudioProcessorValueTreeState &vts)
     : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
 {
+    /*
     decaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "delay", decaySlider);
     gainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "gain", gainSlider);
     balanceSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "balance", balanceSlider);
@@ -34,6 +35,7 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     balanceSlider.setBounds(220, 10, 100, 100);
     balanceSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 25);
     addAndMakeVisible(balanceSlider);
+     */
     
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.

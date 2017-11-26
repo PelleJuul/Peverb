@@ -11,9 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "AllPassFilter.h"
-#include "SAllPassFilter.h"
-#include "NestedAllPass.h"
+#include "LateReverb.h"
 
 
 //==============================================================================
@@ -60,9 +58,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    float process(float x);
     AudioProcessorValueTreeState parameters;
-    NestedAllPass nestedAllPass;
+    LateReverb lateReverb;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
