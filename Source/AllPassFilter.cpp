@@ -1,40 +1,25 @@
 /*
   ==============================================================================
 
-    AllPassFilter.cpp
-    Created: 30 Oct 2017 2:26:37pm
+    AllpassFilter.cpp
+    Created: 8 Dec 2017 9:00:03am
     Author:  Pelle Juul Christensen
 
   ==============================================================================
 */
 
-#include "AllPassFilter.h"
-#include "DelayLine.h"
-#include <math.h>
+#include "AllpassFilter.h"
 
-AllPassFilter::AllPassFilter()
+AllpassFilter::AllpassFilter(float delayLength, float gain, int sampleRate) :
+    delay(delayLength, sampleRate)
 {
-    
+    this->gain = gain;
 }
 
-AllPassFilter::AllPassFilter(float delay, float g) : delayLine()
+float AllpassFilter::process(float x)
 {
-    set(delay, g);
-}
-
-void AllPassFilter::set(float delay, float g)
-{
-    delayLine.setDelay(delay);
-    scale = 1.0;
-    this->g = g;
-    this->delay = delay;
-}
-
-float AllPassFilter::process(float x)
-{
-    float direct = x * (-g);
-    float sum2 = delayLine.read(delay * scale + offset) + direct;
-    float sum1 = sum2 * g + x;
-    delayLine.write(sum1);
+    float sum2 = delay.read() + -gain * x;
+    float sum1 = gain * sum2 + x;
+    delay.write(sum1);
     return sum2;
 }

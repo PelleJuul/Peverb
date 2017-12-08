@@ -2,62 +2,64 @@
   ==============================================================================
 
     LateReverb.cpp
-    Created: 24 Nov 2017 1:35:00pm
+    Created: 8 Dec 2017 9:00:13am
     Author:  Pelle Juul Christensen
 
   ==============================================================================
 */
 
 #include "LateReverb.h"
+#include "AllpassFilter.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 
-LateReverb::LateReverb()
+LateReverb::LateReverb(int sampleRate) :
+    allpassAL(0.0083, 0.7, sampleRate),
+    allpassBL(0.022, 0.5, sampleRate),
+    allpassCL(0.030, 0.5, sampleRate),
+    allpassDL(0.0098, 0.6, sampleRate),
+    wrapAL([&] (float x) { return allpassBL.process(allpassAL.process(x)); }),
+    nestedAL(0.035, 0.3, &wrapAL, sampleRate),
+    nestedBL(0.039, 0.3, &allpassDL, sampleRate),
+    delayAL(0.005, sampleRate),
+    delayBL(0.067, sampleRate),
+    delayCL(0.015, sampleRate),
+    delayDL(0.108, sampleRate),
+
+    allpassAR(0.0093, 0.7, sampleRate),
+    allpassBR(0.023, 0.5, sampleRate),
+    allpassCR(0.031, 0.5, sampleRate),
+    allpassDR(0.0108, 0.6, sampleRate),
+    wrapAR([&] (float x) { return allpassBR.process(allpassAR.process(x)); }),
+    nestedAR(0.036, 0.3, &wrapAR, sampleRate),
+    nestedBR(0.040, 0.3, &allpassDR, sampleRate),
+    delayAR(0.006, sampleRate),
+    delayBR(0.068, sampleRate),
+    delayCR(0.016, sampleRate),
+    delayDR(0.109, sampleRate)
 {
-    // [10, 19,  37, 39,  67, 71, 83, 89, 119, 121]
-    // [31, 35, 113, 107, 374, 393]
-    
-    nestedAllpassLeft.addAllPass(0.089, 0.7);
-    nestedAllpassLeft.addAllPass(0.071, 0.7);
-    nestedAllpassLeft.addAllPass(0.0393, 0.7);
-    nestedAllpassLeft.addAllPass(0.0107, 0.7);
-    nestedAllpassLeft.addAllPass(0.0031, 0.7);
-    
-    nestedAllpassRight.addAllPass(0.083, 0.7);
-    nestedAllpassRight.addAllPass(0.067, 0.7);
-    nestedAllpassRight.addAllPass(0.0374, 0.7);
-    nestedAllpassRight.addAllPass(0.0113, 0.7);
-    nestedAllpassRight.addAllPass(0.0035, 0.7);
+    gain = 0.7;
+    IIRCoefficients coeff = IIRCoefficients::makeLowPass(sampleRate, 2500);
+    feedbackFilterL.setCoefficients(coeff);
+    feedbackFilterR.setCoefficients(coeff);
 }
 
-float LateReverb::processLeft(float t, float x)
+void LateReverb::process(float l, float r)
 {
-    //float offset = (0.5 + sin(2 * M_PI * t * 1.1) * 0.5) * 0.0005;
-    //nestedAllpassLeft.allPasses[2]->offset = offset;
-    float result = nestedAllpassLeft.process(x);
-    nestedAllpassRight.feedback = result;
-    return result;
-};
-
-float LateReverb::processRight(float t, float x)
-{
-    //float offset = (0.5 + sin(2 * M_PI * t * 1.0) * 0.5) * 0.0005;
-    //nestedAllpassRight.allPasses[2]->offset = offset;
-    float result = nestedAllpassRight.process(x);
-    nestedAllpassLeft.feedback = result;
-    return result;
-};
-
-void LateReverb::setDecay(float value)
-{
-    nestedAllpassLeft.setGain(value);
-    nestedAllpassRight.setGain(value);
-}
-
-void LateReverb::crossower()
-{
-    /*
-    float feedbackLeft = nestedAllpassLeft.feedback;
-    float feedbackRight = nestedAllpassRight.feedback;
-    nestedAllpassLeft.feedback += feedbackRight * 0.2;
-    nestedAllpassRight.feedback += feedbackLeft * 0.2;
-    */
+    {
+        float sum1 = l + gain * feedbackFilterL.processSingleSampleRaw(delayDR.read());
+        float xNestedA = nestedAL.process(sum1);
+        float xAllpassC = delayBL.process(allpassCL.process(delayAL.process(xNestedA)));
+        float xNestedB = nestedBL.process(r + gain * delayCL.process(xAllpassC));
+        delayDL.write(xNestedB);
+        left = 0.5 * xNestedA + 0.5 * xAllpassC + 0.5 * xNestedB;
+    }
+    
+    {
+        float sum1 = r + gain * feedbackFilterR.processSingleSampleRaw(delayDL.read());
+        float xNestedA = nestedAR.process(sum1);
+        float xAllpassC = delayBR.process(allpassCR.process(delayAR.process(xNestedA)));
+        float xNestedB = nestedBR.process(l + gain * delayCR.process(xAllpassC));
+        delayDR.write(xNestedB);
+        right = 0.5 * xNestedA + 0.5 * xAllpassC + 0.5 * xNestedB;
+    }
 }

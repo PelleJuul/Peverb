@@ -27,7 +27,9 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #else
     :
 #endif
-    parameters(*this, nullptr)
+    parameters(*this, nullptr),
+    lateReverb(44100),
+    earlyReflections(44100)
 {
     parameters.createAndAddParameter("decay",
                                      "decay", "",
@@ -148,6 +150,11 @@ bool NewProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 }
 #endif
 
+float pan(float a, float b, float r)
+{
+    return sqrtf(1 - r) * a + sqrtf(r) * b;
+}
+
 void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
@@ -155,54 +162,25 @@ void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     const int totalNumOutputChannels = getTotalNumOutputChannels();
 
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-
+        buffer.clear(i, 0, buffer.getNumSamples());
+    
     float decay = *parameters.getRawParameterValue("decay");
     float dryWet = 0.5 + *parameters.getRawParameterValue("dry/wet");
-    lateReverb.setDecay(decay);
-    float* channelData = buffer.getWritePointer (0);
+    lateReverb.gain = decay;
+    float *leftBuffer = buffer.getWritePointer(0);
+    float *rightBuffer = buffer.getWritePointer(1);
     
-    for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
-        float mix = 0;
-        time += 1 / (float)getSampleRate();
+    for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+    {
+        float l = leftBuffer[sample];
+        float r = rightBuffer[sample];
         
-        for (int channel = 0; channel < totalNumInputChannels; ++channel)
-        {
-            mix += buffer.getSample(channel, sample);
-        }
+        earlyReflections.process(l, r);
+        lateReverb.process(pan(l, earlyReflections.left, 0.2), pan(r, earlyReflections.right, 0.2));
         
-        earlyReflections.process(mix);
-        float l = earlyReflections.left;
-        float r = earlyReflections.right;
-        
-        l = lateReverb.processLeft(time, l);
-        r = lateReverb.processRight(time, r);
-        lateReverb.crossower();
-        
-        l = sqrt(dryWet) * l + sqrt(1 - dryWet) * mix;
-        r = sqrt(dryWet) * r + sqrt(1 - dryWet) * mix;
-        
-        
-        if (l > 1.0) {
-            std::cout << "Overflow left!\n";
-        }
-        
-        if (r > 1.0) {
-            std::cout << "Overflow right!\n";
-        }
-        
-        for (int channel = 0; channel < totalNumInputChannels; ++channel)
-        {
-            if (channel % 2 == 0)
-                buffer.setSample(channel, sample, l);
-            else
-                buffer.setSample(channel, sample, r);
-        }
+        leftBuffer[sample] = pan(l, lateReverb.left, dryWet);
+        rightBuffer[sample] = pan(r, lateReverb.right, dryWet);
     }
-    
-    // nestedAllPass.setScale(*parameters.getRawParameterValue("delay"));
-    // nestedAllPass.setInnerGain(*parameters.getRawParameterValue("gain"));
-    // nestedAllPass.setGain(*parameters.getRawParameterValue("balance"));
 }
 
 //==============================================================================

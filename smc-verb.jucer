@@ -13,24 +13,25 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0">
   <MAINGROUP id="D1RdPw" name="smc-verb">
     <GROUP id="{61FA2086-5D9F-B47E-0D66-9F489CC1699C}" name="Source">
+      <FILE id="KHMX1y" name="Wrap.cpp" compile="1" resource="0" file="Source/Wrap.cpp"/>
+      <FILE id="LVYgP0" name="Wrap.h" compile="0" resource="0" file="Source/Wrap.h"/>
+      <FILE id="Y4D5yo" name="Processor.cpp" compile="1" resource="0" file="Source/Processor.cpp"/>
+      <FILE id="mNm1cF" name="Processor.h" compile="0" resource="0" file="Source/Processor.h"/>
+      <FILE id="TFObc3" name="Nested.cpp" compile="1" resource="0" file="Source/Nested.cpp"/>
+      <FILE id="MAA4I9" name="Nested.h" compile="0" resource="0" file="Source/Nested.h"/>
+      <FILE id="Hww8ed" name="LateReverb.cpp" compile="1" resource="0" file="Source/LateReverb.cpp"/>
+      <FILE id="GfxOe8" name="LateReverb.h" compile="0" resource="0" file="Source/LateReverb.h"/>
+      <FILE id="tZtJCM" name="AllpassFilter.cpp" compile="1" resource="0"
+            file="Source/AllpassFilter.cpp"/>
+      <FILE id="azye2m" name="AllpassFilter.h" compile="0" resource="0" file="Source/AllpassFilter.h"/>
+      <FILE id="Gq0s6r" name="CombFilter.cpp" compile="1" resource="0" file="Source/CombFilter.cpp"/>
+      <FILE id="q3wkbc" name="CombFilter.h" compile="0" resource="0" file="Source/CombFilter.h"/>
+      <FILE id="RxByzc" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
+      <FILE id="PLk56O" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>
       <FILE id="uqQvbr" name="EarlyReflections.cpp" compile="1" resource="0"
             file="Source/EarlyReflections.cpp"/>
       <FILE id="WL3fRd" name="EarlyReflections.h" compile="0" resource="0"
             file="Source/EarlyReflections.h"/>
-      <FILE id="iXKq5O" name="LateReverb.cpp" compile="1" resource="0" file="Source/LateReverb.cpp"/>
-      <FILE id="WoHNmB" name="LateReverb.h" compile="0" resource="0" file="Source/LateReverb.h"/>
-      <FILE id="gdGZHT" name="SAllPassFilter.cpp" compile="1" resource="0"
-            file="Source/SAllPassFilter.cpp"/>
-      <FILE id="HHEpQP" name="SAllPassFilter.h" compile="0" resource="0"
-            file="Source/SAllPassFilter.h"/>
-      <FILE id="wvwCLC" name="NestedAllPass.cpp" compile="1" resource="0"
-            file="Source/NestedAllPass.cpp"/>
-      <FILE id="mYlBnx" name="NestedAllPass.h" compile="0" resource="0" file="Source/NestedAllPass.h"/>
-      <FILE id="LQeIS6" name="AllPassFilter.cpp" compile="1" resource="0"
-            file="Source/AllPassFilter.cpp"/>
-      <FILE id="QEQQIp" name="AllPassFilter.h" compile="0" resource="0" file="Source/AllPassFilter.h"/>
-      <FILE id="gYZWIj" name="DelayLine.cpp" compile="1" resource="0" file="Source/DelayLine.cpp"/>
-      <FILE id="DayZ3w" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
       <FILE id="vhCwqZ" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="qA8aLY" name="PluginProcessor.h" compile="0" resource="0"

@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    AllpassFilter.h
-    Created: 8 Dec 2017 9:00:03am
+    Chain.h
+    Created: 8 Dec 2017 10:10:09am
     Author:  Pelle Juul Christensen
 
   ==============================================================================
@@ -10,16 +10,14 @@
 
 #pragma once
 #include "Processor.h"
-#include "Delay.h"
+#include <functional>
 
-class AllpassFilter : public Processor
+class Wrap : public Processor
 {
 public:
-    AllpassFilter(float delayLength, float gain, int sampleRate);
-    float process(float x) override;
+    Wrap(std::function<float(float)> processFunc);
+    virtual float process(float x);
     
 private:
-    Delay delay;
-    float gain;
-    float lastY;
+    std::function<float(float)> processFunc;
 };

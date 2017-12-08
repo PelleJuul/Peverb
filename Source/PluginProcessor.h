@@ -61,8 +61,8 @@ public:
 private:
     float time;
     AudioProcessorValueTreeState parameters;
-    LateReverb lateReverb;
     EarlyReflections earlyReflections;
+    LateReverb lateReverb;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)

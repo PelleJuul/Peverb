@@ -10,7 +10,7 @@
 
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "DelayLine.h"
+#include "Delay.h"
 #include <vector>
 
 class EarlyReflections
@@ -19,19 +19,17 @@ public:
     float left;
     float right;
     
-    EarlyReflections();
-    float process(float x);
+    EarlyReflections(int sampleRate);
+    void process(float l, float r);
 
 private:
     float directGain = 0.5;
     float reflectGain = 0.5;
-    DelayLine delay;
-    std::vector<float> tabsLeft;
-    std::vector<float> tabsRight;
-    std::vector<float> coeffsLeft;
-    std::vector<float> coeffsRight;
+    Delay delayL;
+    Delay delayR;
+    
     IIRFilter binauralLowPassLeft;
     IIRFilter binauralLowPassRight;
-    DelayLine binauralDelayLeft;
-    DelayLine binauralDelayRight;
+    Delay binauralDelayLeft;
+    Delay binauralDelayRight;
 };
