@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "LateReverb.h"
+#include "EarlyReflections.h"
 
 
 //==============================================================================
@@ -58,8 +59,10 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    float time;
     AudioProcessorValueTreeState parameters;
     LateReverb lateReverb;
+    EarlyReflections earlyReflections;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)

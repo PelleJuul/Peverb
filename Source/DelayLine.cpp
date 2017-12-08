@@ -30,13 +30,20 @@ void DelayLine::setDelaySeconds(float newSize)
 
 void DelayLine::write(float sample)
 {
-    samples[index] = sample;
-    index = (index + 1) % samples.size();
+    samples[index % samples.size()
+            ] = sample;
+    index = index + 1;
+}
+
+float DelayLine::read()
+{
+    int i = (index - samples.size()) % samples.size();
+    return samples[i];
 }
 
 float DelayLine::read(float t) const
 {
-    int n = floor(t  * (float)sampleRate);
+    int n = floor(t * sampleRate);
     int i = (index - n) % samples.size();
     return samples[i];
 }

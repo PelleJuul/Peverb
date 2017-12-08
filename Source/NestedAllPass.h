@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AllPassFilter.h"
+#include "DelayLine.h"
 
 class NestedAllPass
 {
@@ -27,10 +28,10 @@ public:
     void setInnerGain(float newVal);
     void setGain(float value);
     
+    std::vector<AllPassFilter*> allPasses;
 private:
     float g;
-    
-    std::vector<AllPassFilter*> allPasses;
+    DelayLine delay;
     IIRFilter feedbackFilter;
     IIRFilter inputFilter;
 };

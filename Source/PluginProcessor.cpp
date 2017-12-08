@@ -29,26 +29,20 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #endif
     parameters(*this, nullptr)
 {
-    parameters.createAndAddParameter("delay",
-                                     "delay", "",
-                                     NormalisableRange<float>(0.01, 1, 0.0001),
-                                     1.0,
+    parameters.createAndAddParameter("decay",
+                                     "decay", "",
+                                     NormalisableRange<float>(0, 1),
+                                     0.7,
                                      nullptr,
                                      nullptr);
     
-    parameters.createAndAddParameter("gain",
-                                     "gain", "",
-                                     NormalisableRange<float>(0, 1, 0.001),
-                                     0.5,
+    parameters.createAndAddParameter("dry/wet",
+                                     "dry/wet", "",
+                                     NormalisableRange<float>(-0.5, 0.5),
+                                     0.0,
                                      nullptr,
                                      nullptr);
-    
-    parameters.createAndAddParameter("balance",
-                                     "balance", "",
-                                     NormalisableRange<float>(0.00, 1, 0.0001),
-                                     0.5,
-                                     nullptr,
-                                     nullptr);
+    time = 0;
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -163,19 +157,39 @@ void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+    float decay = *parameters.getRawParameterValue("decay");
+    float dryWet = 0.5 + *parameters.getRawParameterValue("dry/wet");
+    lateReverb.setDecay(decay);
     float* channelData = buffer.getWritePointer (0);
     
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
         float mix = 0;
+        time += 1 / (float)getSampleRate();
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             mix += buffer.getSample(channel, sample);
         }
         
-        float l = lateReverb.processLeft(mix);
-        float r = lateReverb.processRight(mix);
+        earlyReflections.process(mix);
+        float l = earlyReflections.left;
+        float r = earlyReflections.right;
+        
+        l = lateReverb.processLeft(time, l);
+        r = lateReverb.processRight(time, r);
         lateReverb.crossower();
+        
+        l = sqrt(dryWet) * l + sqrt(1 - dryWet) * mix;
+        r = sqrt(dryWet) * r + sqrt(1 - dryWet) * mix;
+        
+        
+        if (l > 1.0) {
+            std::cout << "Overflow left!\n";
+        }
+        
+        if (r > 1.0) {
+            std::cout << "Overflow right!\n";
+        }
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {

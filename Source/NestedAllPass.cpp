@@ -12,7 +12,7 @@
 #include "NestedAllPass.h"
 #include "AllPassFilter.h"
 
-NestedAllPass::NestedAllPass() : NestedAllPass(0.2)
+NestedAllPass::NestedAllPass() : NestedAllPass(0.6)
 {
     
 }
@@ -25,6 +25,7 @@ NestedAllPass::NestedAllPass(float g)
     feedbackFilter.setCoefficients(coeffA);
     IIRCoefficients coeffB = IIRCoefficients::makeLowPass(44100, 8000, 0.5);
     inputFilter.setCoefficients(coeffB);
+    delay.setDelaySeconds(0.03);
 }
 
 void NestedAllPass::addAllPass(float delay, float g)
@@ -56,14 +57,14 @@ float NestedAllPass::process(float x)
 {
     float filtered = inputFilter.processSingleSampleRaw(x);
     float direct = filtered * (-g);
-    float sum2 = x + feedback;
-    float allPassed = sum2;
+    float sum2 = x + feedbackFilter.processSingleSampleRaw(feedback) * g;
+    delay.write(sum2);
+    float allPassed = delay.read();
     
     for (AllPassFilter *ap : allPasses) {
         allPassed = ap->process(allPassed);
     }
     
     float sum1 = direct + allPassed;
-    feedback = feedbackFilter.processSingleSampleRaw(sum1) * g;
     return sum1;
 }

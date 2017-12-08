@@ -20,6 +20,7 @@ public:
     void setDelaySeconds(float newSize);
     void write(float sample);
     float read(float t) const;
+    float read();
     void clear();
     
 private:

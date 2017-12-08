@@ -15,9 +15,10 @@ class LateReverb
 {
 public:
     LateReverb();
-    float processLeft(float x);
-    float processRight(float x);
+    float processLeft(float t, float x);
+    float processRight(float t, float x);
     void crossower();
+    void setDecay(float value);
     
 private:
     NestedAllPass nestedAllpassLeft;

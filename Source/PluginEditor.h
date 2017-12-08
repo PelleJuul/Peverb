@@ -14,6 +14,7 @@
 #include "PluginProcessor.h"
 
 
+typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 //==============================================================================
 /**
 */
@@ -32,6 +33,14 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& processor;
     AudioProcessorValueTreeState& valueTreeState;
+    Label decayLabel;
+    Slider decaySlider;
+    ScopedPointer<SliderAttachment> decayAttachment;
+    
+    Label dryWetLabel;
+    Slider dryWetSlider;
+    ScopedPointer<SliderAttachment> dryWetAttachment;
+    
     
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)

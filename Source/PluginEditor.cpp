@@ -16,30 +16,37 @@
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p, AudioProcessorValueTreeState &vts)
     : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
 {
-    /*
-    decaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "delay", decaySlider);
-    gainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "gain", gainSlider);
-    balanceSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "balance", balanceSlider);
+    decayAttachment = new SliderAttachment(valueTreeState, "decay", decaySlider);
+    dryWetAttachment = new SliderAttachment(valueTreeState, "dry/wet", dryWetSlider);
     
-    decaySlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    decaySlider.setBounds(10, 10, 100, 100);
-    decaySlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 25);
+    float marginX = 10;
+    float marginY = 10;
+    float x = marginX;
+    float y = marginY + decaySlider.getTextBoxHeight();
+    float w = 100;
+    float h = 100;
+    
+    decaySlider.setBounds(x, y, w, h);
+    decaySlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    decaySlider.setTextBoxStyle(Slider::TextBoxBelow, false, w * 0.75, decaySlider.getTextBoxHeight());
+    decayLabel.setText("decay", NotificationType::sendNotificationAsync);
+    decayLabel.setJustificationType(Justification::centred);
+    decayLabel.attachToComponent(&decaySlider, false);
     addAndMakeVisible(decaySlider);
     
-    gainSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    gainSlider.setBounds(110, 10, 100, 100);
-    gainSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 25);
-    addAndMakeVisible(gainSlider);
+    x += w + marginX;
     
-    balanceSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    balanceSlider.setBounds(220, 10, 100, 100);
-    balanceSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 25);
-    addAndMakeVisible(balanceSlider);
-     */
+    dryWetSlider.setBounds(x, y, w, h);
+    dryWetSlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    dryWetSlider.setTextBoxStyle(Slider::TextBoxBelow, false, w * 0.75, dryWetSlider.getTextBoxHeight());
+    dryWetLabel.setText("dry/wet", NotificationType::sendNotificationAsync);
+    dryWetLabel.setJustificationType(Justification::centred);
+    dryWetLabel.attachToComponent(&dryWetSlider, false);
+    addAndMakeVisible(dryWetSlider);
     
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    int numX = 2;
+    int numY = 1;
+    setSize (numX * w + (numX + 1) * marginX, numY * h + (numY + 1) * marginY + marginY + decaySlider.getTextBoxHeight());
 }
 
 NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
