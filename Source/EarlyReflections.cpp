@@ -13,6 +13,8 @@
 #include "Delay.h"
 #include <vector>
 
+
+
 EarlyReflections::EarlyReflections(int sampleRate) :
     delayL(0.1, sampleRate),
     delayR(0.1, sampleRate),
@@ -35,19 +37,42 @@ EarlyReflections::EarlyReflections(int sampleRate) :
     binauralLowPassRight.setCoefficients(coeff);
 }
 
+/*
+Direct: 17.7
+Early:
+21.1l
+27.4l
+29.7l
+31.6l
+33.0l
+75.6l
+
+24.6r
+30.9r
+32.3r
+35.4r
+36.4r
+40.7r
+*/
+
 void EarlyReflections::process(float l, float r)
 {
     float x = sqrtf(0.5) * l + sqrt(0.5) * r;
     float a = 0.7;
     float b = 0.3;
-    float sumL = a*b * delayL.read(0.013)
-               + a*b*b * delayL.read(0.031)
-               + a*b*b*b + delayL.read(0.059)
-               + a*b*b*b*b + delayL.read(0.073);
-    float sumR = a*b * delayR.read(0.023)
-               + a*b*b * delayR.read(0.043)
-               + a*b*b*b * delayR.read(0.064)
-               + a*b*b*b*b * delayR.read(0.081);
+    float sumL = 0.2  * delayL.read(0.0211)
+               + 0.2  * delayL.read(0.0274)
+               + 0.14 * delayL.read(0.0297)
+               + 0.14 * delayL.read(0.0316)
+               + 0.14 * delayL.read(0.0330)
+               + 0.11 * delayL.read(0.0756);
+    
+    float sumR = 0.2  * delayR.read(0.0246)
+               + 0.2  * delayR.read(0.0309)
+               + 0.14 * delayR.read(0.0323)
+               + 0.14 * delayR.read(0.0354)
+               + 0.14 * delayR.read(0.0364)
+               + 0.14 * delayR.read(0.0407);
     delayL.write(x);
     delayR.write(x);
     
