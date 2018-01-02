@@ -172,11 +172,12 @@ void NewProjectAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     
     for (int sample = 0; sample < buffer.getNumSamples(); sample++)
     {
+        time += 1.0 / getSampleRate();
         float l = leftBuffer[sample];
         float r = rightBuffer[sample];
         
         earlyReflections.process(l, r);
-        lateReverb.process(pan(l, earlyReflections.left, 0.2), pan(r, earlyReflections.right, 0.2));
+        lateReverb.process(time, earlyReflections.left, earlyReflections.right);
         
         leftBuffer[sample] = pan(l, lateReverb.left, dryWet);
         rightBuffer[sample] = pan(r, lateReverb.right, dryWet);

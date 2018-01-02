@@ -18,6 +18,8 @@ public:
     AllpassFilter(float delayLength, float gain, int sampleRate);
     float process(float x) override;
     
+    float delayLength;
+    float delayOffset;
 private:
     Delay delay;
     float gain;

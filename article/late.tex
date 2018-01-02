@@ -1,0 +1,218 @@
+
+\begin{figure}[p]
+\centering
+\scalebox{0.75}{%
+\begin{tikzpicture}
+    \matrix (m1) [row sep=2.5mm, column sep=5mm, ampersand replacement=\&]
+    {
+        
+        \node[dspnodeopen,dsp/label=above]  (0-0in)         {$x_l[n]$};     \&
+        \skipnodes{15}
+        \node[dspnodeopen,dsp/label=above]  (0-1in)         {$y_l[n]$};     \&
+        \skipnodes{7}
+        \node[dspnodeopen,dsp/label=above]  (0-2in)         {$y_l[n]$};     \\
+
+        \skipnodes{16}
+        \node[dspmixer,dsp/label=right]     (1-1mul)        {$0.5$};        \&
+        \skipnodes{7}
+        \node[dspmixer,dsp/label=right]     (1-2mul)        {$0.5$};        \\
+
+        \skipnodes{2}
+        \node[coordinate]                   (3-0cor)        {};             \&
+        \skipnodes{5}
+        \node[dspmixer,dsp/label=above]     (3-1add)        {$-0.3$};       \&
+        \skipnodes{3}
+        \node[coordinate]                   (3-2cor)        {};             \\
+
+        \node[coordinate]                   (nul)           {};             \\
+        \node[coordinate]                   (nul)           {};             \\
+
+        \node[dspadder]                     (6-0add)        {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspnodefull]                  (6-1node)       {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspadder]                     (6-2sum)        {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-3ap)         {AP$(-8.3, 0.7)$};\&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-4ap)         {AP$(-22, 0.5$)};\&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-5del)        {$-4.7$};       \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspadder]                     (6-6add)        {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspnodefull]                  (6-7node)       {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspnodefull]                  (6-8node)       {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-9del)        {$-5$};       \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-10ap)        {AP$(-30 + v(t), 0.5)$};\&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-11del)       {$-67$};       \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspnodefull]                  (6-12node)      {};             \\
+
+        {};                                                                 \\
+        {};                                                                 \\
+        \skipnodes{4}
+        \node[coordinate]                   (7-0cor)        {};             \&
+        \skipnodes{4}
+        \node[dspmixer,dsp/label=above]     (7-1mul)        {$0.3$};        \&
+        \skipnodes{4}
+        \node[coordinate]                   (7-2cor)        {};             \\
+    
+        \node[dspnodeopen,dsp/label=below]  (8-0in)         {\textit{from right}}; \\
+        \node[coordinate]                   (nul)           {};             \\
+        {};                                                                 \\
+        {};                                                                 \\
+
+        \node[coordinate]                   (9-0cor)        {};             \&
+        \skipnodes{23}
+        \node[coordinate]                   (9-1cor)        {};             \\
+        
+        {}; \\
+        {}; \\
+        {}; \\
+        \skipnodes{4}
+        \node[dspnodefull]                  (10-0in)        {$x_l[n]$};     \&
+        \skipnodes{13}
+        \node[dspnodefull]                  (10-1in)        {$y_l[n]$};     \\
+
+        \skipnodes{18}
+        \node[dspmixer,dsp/label=right]     (11-0mul)       {$0.5$};        \\
+
+        \skipnodes{6}
+        \node[coordinate]                   (12-1cor)       {};             \&
+        \skipnodes{3}
+        \node[dspmixer,dsp/label=above]     (12-2mul)       {$-0.3$};       \&
+        \skipnodes{3}
+        \node[coordinate]                   (12-3cor)       {};             \\
+        
+        \node[coordinate]                   (nul)           {};             \\
+        \node[coordinate]                   (nul)           {};             \\
+
+        \node[dspsquare]                    (6-13del)       {$-15$};        \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspmixer,dsp/label=above]     (6-14mul)       {$g$};          \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspadder]                     (6-15add)       {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspnodefull]                  (6-16node)      {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspadder]                     (6-17add)       {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-18ap)        {AP$(-9.8, 0.6$};\&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspsquare]                    (6-19del)       {$-29.2$};       \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspadder]                     (6-20add)       {};             \&
+        \node[coordinate]                   (nul)           {};             \&
+        \node[dspnodefull]                  (6-21node)      {};             \&
+                                                                        {}; \&
+        \node[dspnodefull]                  (6-22node)      {};             \&
+                                                                        {}; \&
+        \node[dspsquare]                    (6-23del)       {$-108$};       \&
+                                                                        {}; \&
+        \node[dspsquare]                    (6-24lp)        {LP};           \&
+                                                                        {}; \&
+        \node[dspmixer,dsp/label=above]     (6-25mul)       {$g$};          \&
+                                                                        {}; \&
+        \node[dspnodeopen,dsp/label=above]  (6-26node)      {\textit{to right}}; \\
+
+        \node[coordinate]                   (10-0from)      {};             \\
+
+        \skipnodes{8}
+        \node[coordinate]                   (13-0cor)       {};             \&
+        \skipnodes{2}
+        \node[dspmixer,dsp/label=above]     (13-1mul)       {$0.3$};        \&
+        \skipnodes{4}
+        \node[coordinate]                   (13-2cor)       {};             \\
+
+        \node[coordinate] (10-0from){\textit{From right}};             \\
+    };
+
+    \begin{scope}[start chain]
+
+        \chainin (8-0in);
+        \chainin (6-0add) [join=by dspflow];
+        
+        \chainin (0-0in);
+        \chainin (6-0add) [join=by dspflow];
+        \chainin (6-1node) [join=by dspflow];
+        \chainin (6-2sum) [join=by dspflow];
+        \chainin (6-3ap) [join=by dspflow];
+        \chainin (6-4ap) [join=by dspflow];
+        \chainin (6-5del) [join=by dspflow];
+        \chainin (6-6add) [join=by dspflow];
+        \chainin (6-7node) [join=by dspflow];
+        \chainin (6-8node) [join=by dspflow];
+        \chainin (6-9del) [join=by dspflow];
+        \chainin (6-10ap) [join=by dspflow];
+        \chainin (6-11del) [join=by dspflow];
+        \chainin (6-12node) [join=by dspflow];
+        \chainin (9-1cor) [join=by dspflow];
+        \chainin (9-0cor) [join=by dspflow];
+
+        \chainin (6-13del) [join=by dspflow];
+        \chainin (6-14mul) [join=by dspflow];
+        \chainin (6-15add) [join=by dspflow];
+        \chainin (6-16node) [join=by dspflow];
+        \chainin (6-17add) [join=by dspflow];
+        \chainin (6-18ap) [join=by dspflow];
+        \chainin (6-19del) [join=by dspflow];
+        \chainin (6-20add) [join=by dspflow];
+        \chainin (6-21node) [join=by dspflow];
+        \chainin (6-22node) [join=by dspflow];
+        \chainin (6-23del) [join=by dspflow];
+        \chainin (6-24lp) [join=by dspflow];
+        \chainin (6-25mul) [join=by dspflow];
+        \chainin (6-26node) [join=by dspflow];
+
+        %\chainin (10-0from) ;
+        %\chainin (6-0add) [join=by dspflow];
+
+        \chainin (6-7node);
+        \chainin (7-2cor) [join=by dspflow];
+        \chainin (7-1mul) [join=by dspflow];
+        \chainin (7-0cor) [join=by dspflow];
+        \chainin (6-2sum) [join=by dspflow];
+
+        \chainin (6-8node);
+        \chainin (1-1mul) [join=by dspflow];
+        \chainin (0-1in) [join=by dspflow];
+
+        \chainin (6-12node);
+        \chainin (1-2mul) [join=by dspflow];
+        \chainin (0-2in) [join=by dspflow];
+
+        \chainin (10-0in);
+        \chainin (6-15add) [join=by dspflow];
+
+        \chainin (6-16node); 
+        \chainin (12-1cor) [join=by dspflow];
+        \chainin (12-2mul) [join=by dspflow];
+        \chainin (12-3cor) [join=by dspflow];
+        \chainin (6-20add) [join=by dspflow];
+
+        \chainin (6-22node); 
+        \chainin (11-0mul) [join=by dspflow];
+        \chainin (10-1in)  [join=by dspflow];
+
+        \chainin (6-21node);
+        \chainin (13-2cor) [join=by dspflow];
+        \chainin (13-1mul) [join=by dspflow];
+        \chainin (13-0cor) [join=by dspflow];
+        \chainin (6-17add) [join=by dspflow];
+
+        \chainin (6-1node);
+        \chainin (3-0cor) [join=by dspflow];
+        \chainin (3-1add) [join=by dspflow];
+        \chainin (3-2cor) [join=by dspflow];
+        \chainin (6-6add) [join=by dspflow];
+	\end{scope}
+\end{tikzpicture}
+}
+\label{fig:late}
+\caption{Diagram of half of the the late reverberation algorithm. All delay times (e.g. $\boxed{-4.7}$) are specified in milliseconds. Allpass filters are denoted $\boxed{\text{AP}(t, a)}$ where $t$ is the delay time and $a$ is the gain coefficient. The function $v(t)$ is a sinusoid at around $2Hz$ going between $0ms$ and $0.5ms$. The cross-feedback lowpass filter is  one-pole with a cutoff of $2.5KHz$. The decay time of the algorithm is controlled by changing $g$ between $0$ and $1$.}
+\end{figure}

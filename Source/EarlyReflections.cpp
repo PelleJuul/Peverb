@@ -58,8 +58,6 @@ Early:
 void EarlyReflections::process(float l, float r)
 {
     float x = sqrtf(0.5) * l + sqrt(0.5) * r;
-    float a = 0.7;
-    float b = 0.3;
     float sumL = 0.2  * delayL.read(0.0211)
                + 0.2  * delayL.read(0.0274)
                + 0.14 * delayL.read(0.0297)

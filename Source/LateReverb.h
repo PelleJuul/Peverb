@@ -22,7 +22,7 @@ public:
     float right;
     float gain;
     LateReverb(int sampleRate);
-    void process(float l, float r);
+    void process(float t, float l, float r);
     
 private:
     AllpassFilter allpassAL;

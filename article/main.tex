@@ -1,7 +1,19 @@
 \documentclass{scrartcl}
 \usepackage{amsmath}
 \usepackage{tikz}
+\usepackage{hyperref}
+\usepackage[font={small,it}]{caption}
+\usepackage{pdflscape}
+\usepackage{rotating}
+\usepackage{multido}
 \usetikzlibrary{dsp,chains}
+\usepackage{expl3}
+\ExplSyntaxOn
+\cs_new_eq:NN \Repeat \prg_replicate:nn
+\ExplSyntaxOff
+\newcommand{\skipnodes}[1]{
+    \Repeat{#1}{{};\&}
+}
 
 \title{Modified Gardner Reverb}
 \subtitle{Sound Processing Mini Project}
@@ -13,242 +25,27 @@
 This document serves to describe the algorithms used in my \textit{sound processing mini project} to implement an artificial reverberator. First I will describe the implementation of an algorithm for modelling early reverberation. Afterwards an algorithm for modelling late reverberation. Lastly I comment on how these algorithms a implemented in practice.
 
 \section{Early Reflections}
-When a sound propagates through a room it will first arrive at the listener from the \textit{direct path} -- the shortest path, usually a straight line, between the source and the listener. Afterwards the first reflections off the walls of the room will arrive, these are the \textit{second order reflections}. After that we have third and fourth order reflections and so on. These are referred to as the \textit{early reflections}, and are especially important for the spatial impression of the sound \cite[pp. 100]{gardner2002}.
+When a sound propagates through a room it will first arrive at the listener from the \textit{direct path} -- the shortest path, usually a straight line, between the source and the listener. Afterwards the first reflections off the walls of the room will arrive, these are the \textit{second order reflections}. After that we have third and fourth order reflections and so on. These are referred to as the \textit{early reflections}, and are especially important for the spatial impression of the sound \cite[p. 100]{gardner2002}.
 
-% https://amcoustics.com/tools/amray
+The early reflection algorithm I implemented is shown in figure 1, which is based on the algorithm presented in \cite[p. 104]{gardner2002}. This is implmented via two tapped delay lines for the left and right channels respectively. The delay times and coefficients were calculated using Amcoustics Amray tool\footnote{\url{https://amcoustics.com/tools/amray}}. In case of stereo input the left and right channels are mix together to yield a single sound source. The crossover filter and delay acts as a simple head-related filter model for increased spatial impression.
+
+\section{Late Reverberation}
+After the early reflections comes the late reverberation -- a dense collection of echos indistinguishable from one another. This results in a diffuse prolonging of the sound as the energy is absorbed by the room.
+
+To emulate the sound of natural reverberation I implemented a version of Gardner's \textit{Medium Room Reverberator} found in \cite[p. 56]{gardner1982}. This was modified with ideas taken from Dattorro's plate reverberator algorithm shown in \cite[p. 117]{gardner2002}. For a greater stereo image an instance of the algorithm was used for both the left and right channels with slightly different delay parameters. These then feed back into one another, rather than to themselves. Furthermore a time variant component was included to generate a slight movement to the sound, and also to prevent some coloration, since the resonant frequency of the reverberator is being modulated. A diagram of the algorithm is shown in figure 2.
+
+\section{Implementation Notes}
+The algorithms were implemented as a VST/AudioUnit plug-in. The early reflection algorithm feeds directly into the late reverberation algorithm. A graphical user interface allows the user to control the $g$ (decay) parameter of the late reverberation algorithm, as well the mix of dry to reverberated signal.
+
+\begin{landscape}
+\input{early}
+\end{landscape}
+
+\begin{landscape}
+\input{late}
+\end{landscape}
+
 % http://www.texample.net/tikz/examples/fir-filter/
-
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}
-    \matrix (m1) [row sep=2.5mm, column sep=5mm]
-    {
-        \node[dspnodeopen,dsp/label=above]  (m00)  {$x_l[n]$};    &
-        \node[coordinate]                   (m01)  {};          &
-        \node[dspnodefull]                  (m02)  {};          &
-        \node[coordinate]                   (m03)  {};          &
-        \node[dspnodefull]                  (m04)  {};          &
-        \node[coordinate]                   (m05)  {};          &
-        \node[dspnodefull]                  (m06)  {};          &
-        \node[coordinate]                   (m07)  {};          &
-        \node[dspnodefull]                  (m08)  {};          &
-        \node[coordinate]                   (m09)  {};          &
-        \node[dspnodefull]                  (m010) {};         &
-        \node[coordinate]                   (m011) {};         &
-        \node[dspnodefull]                  (m012) {};         &
-        \node[coordinate]                    (m0x) {};          \\
-
-        \node[coordinate]                    (m1x) {};          \\
-
-        \node[coordinate]                   (m0x)  {};          &
-        \node[coordinate]                   (m0x)  {};          &
-        \node[dspsquare]                    (m22)  {-21.1};     &
-        \node[coordinate]                   (m0x)  {};          &
-        \node[dspsquare]                    (m24)  {-27.4};     &
-        \node[coordinate]                   (m0x)  {};          &
-        \node[dspsquare]                    (m26)  {-29.7};     &
-        \node[coordinate]                   (m0x)  {};          &
-        \node[dspsquare]                    (m28)  {-31.6};     &
-        \node[coordinate]                   (m0x)  {};          &
-        \node[dspsquare]                    (m210) {-33.0};     &
-        \node[coordinate]                   (m0x)  {};          &
-        \node[dspsquare]                    (m212) {-75.6};     \\
-
-        \node[coordinate]                    (m1x) {};          \\
-
-        \node[coordinate]                    (m1x) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspmixer, dsp/label=right]     (m32) {$0.2$};    &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspmixer, dsp/label=right]     (m34) {$0.2$};    &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspmixer, dsp/label=right]     (m36) {$0.14$};   &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspmixer, dsp/label=right]     (m38) {$0.14$};   &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspmixer, dsp/label=right]     (m310) {$0.14$};   &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspmixer, dsp/label=right]     (m312) {$0.11$};   \\
-
-        \node[coordinate]                    (m1x) {};          \\
-
-        \node[coordinate]                    (m1x) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[coordinate]                    (m42) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspadder]                      (m44) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspadder]                      (m46) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspadder]                      (m48) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspadder]                      (m410) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspadder]                      (m412) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspnodefull]                   (m414) {};         &
-        \node[coordinate]                    (m1x) {};         &
-        \node[dspadder]                      (m416) {};         \\
-
-        \node[coordinate]                    (m1x) {};          \\
-        % ====================================================
-        \node[coordinate]                    (m1x) {};          \\
-
-        \node[coordinate]                   (m50)  {};    &
-        \node[coordinate]                   (m51)  {};          &
-        \node[dspnodefull]                  (m52)  {};          &
-        \node[coordinate]                   (m53)  {};          &
-        \node[dspnodefull]                  (m54)  {};          &
-        \node[coordinate]                   (m55)  {};          &
-        \node[dspnodefull]                  (m56)  {};          &
-        \node[coordinate]                   (m57)  {};          &
-        \node[dspnodefull]                  (m58)  {};          &
-        \node[coordinate]                   (m59)  {};          &
-        \node[dspnodefull]                  (m510) {};         &
-        \node[coordinate]                   (m511) {};         &
-        \node[dspnodefull]                  (m512) {};         &
-        \node[coordinate]                   (m5x) {};          \\
-
-        \node[coordinate]                    (m1x) {};          \\
-
-        \node[coordinate]                   (m6x)  {};          &
-        \node[coordinate]                   (m6x)  {};          &
-        \node[dspsquare]                    (m62)  {-21.1};     &
-        \node[coordinate]                   (m6x)  {};          &
-        \node[dspsquare]                    (m64)  {-27.4};     &
-        \node[coordinate]                   (m6x)  {};          &
-        \node[dspsquare]                    (m66)  {-29.7};     &
-        \node[coordinate]                   (m6x)  {};          &
-        \node[dspsquare]                    (m68)  {-31.6};     &
-        \node[coordinate]                   (m6x)  {};          &
-        \node[dspsquare]                    (m610) {-33.0};     &
-        \node[coordinate]                   (m6x)  {};          &
-        \node[dspsquare]                    (m612) {-75.6};     \\
-
-        \node[coordinate]                    (m1x) {};          \\
-
-        \node[coordinate]                    (m7x) {};         &
-        \node[coordinate]                    (m7x) {};         &
-        \node[dspmixer, dsp/label=right]     (m72) {$0.2$};    &
-        \node[coordinate]                    (m7x) {};         &
-        \node[dspmixer, dsp/label=right]     (m74) {$0.2$};    &
-        \node[coordinate]                    (m7x) {};         &
-        \node[dspmixer, dsp/label=right]     (m76) {$0.14$};   &
-        \node[coordinate]                    (m7x) {};         &
-        \node[dspmixer, dsp/label=right]     (m78) {$0.14$};   &
-        \node[coordinate]                    (m7x) {};         &
-        \node[dspmixer, dsp/label=right]     (m710) {$0.14$};   &
-        \node[coordinate]                    (m7x) {};         &
-        \node[dspmixer, dsp/label=right]     (m712) {$0.11$};   \\
-        
-        \node[coordinate]                    (m1x) {};          \\
-
-        \node[coordinate]                    (m8x) {};         &
-        \node[coordinate]                    (m8x) {};         &
-        \node[coordinate]                    (m82) {};         &
-        \node[coordinate]                    (m8x) {};         &
-        \node[dspadder]                      (m84) {};         &
-        \node[coordinate]                    (m8x) {};         &
-        \node[dspadder]                      (m86) {};         &
-        \node[coordinate]                    (m8x) {};         &
-        \node[dspadder]                      (m88) {};         &
-        \node[coordinate]                    (m8x) {};         &
-        \node[dspadder]                      (m810) {};         &
-        \node[coordinate]                    (m8x) {};         &
-        \node[dspadder]                      (m812) {};         &
-        \node[coordinate]                    (m8x) {};         &
-        \node[dspadder]                      (m814) {};        &
-        \node[coordinate]                    (m8x) {};         &
-        \node[dspnodefull]                   (m816) {};         \\
-
-        \node[coordinate]                    (m1x) {};          \\
-    };
-
-    \begin{scope}[start chain]
-            \chainin (m00);
-            \chainin (m50) [join=by dspflow];
-            \chainin (m00);
-            \chainin (m02) [join=by dspflow];
-            \chainin (m22) [join=by dspflow];
-            \chainin (m32) [join=by dspflow];
-            \chainin (m42) [join=by dspflow];
-            \chainin (m44) [join=by dspflow];
-            \chainin (m02);
-            \chainin (m04) [join=by dspflow];
-            \chainin (m24) [join=by dspflow];
-            \chainin (m34) [join=by dspflow];
-            \chainin (m44) [join=by dspflow];
-            \chainin (m44) [join=by dspflow];
-            \chainin (m46) [join=by dspflow];
-            \chainin (m04);
-            \chainin (m06) [join=by dspflow];
-            \chainin (m26) [join=by dspflow];
-            \chainin (m36) [join=by dspflow];
-            \chainin (m46) [join=by dspflow];
-            \chainin (m48) [join=by dspflow];
-            \chainin (m06);
-            \chainin (m08) [join=by dspflow];
-            \chainin (m28) [join=by dspflow];
-            \chainin (m38) [join=by dspflow];
-            \chainin (m48) [join=by dspflow];
-            \chainin (m410) [join=by dspflow];
-            \chainin (m08); 
-            \chainin (m010) [join=by dspflow];
-            \chainin (m210) [join=by dspflow];
-            \chainin (m310) [join=by dspflow];
-            \chainin (m410) [join=by dspflow];
-            \chainin (m412) [join=by dspflow];
-            \chainin (m010);
-            \chainin (m012) [join=by dspflow];
-            \chainin (m212) [join=by dspflow];
-            \chainin (m312) [join=by dspflow];
-            \chainin (m412) [join=by dspflow];
-            \chainin (m414) [join=by dspflow];
-            \chainin (m416) [join=by dspflow];
-            \chainin (m012);
-
-            \chainin (m50);
-            \chainin (m52) [join=by dspflow];
-            \chainin (m62) [join=by dspflow];
-            \chainin (m72) [join=by dspflow];
-            \chainin (m82) [join=by dspflow];
-            \chainin (m84) [join=by dspflow];
-            \chainin (m52);
-            \chainin (m54) [join=by dspflow];
-            \chainin (m64) [join=by dspflow];
-            \chainin (m74) [join=by dspflow];
-            \chainin (m84) [join=by dspflow];
-            \chainin (m84) [join=by dspflow];
-            \chainin (m86) [join=by dspflow];
-            \chainin (m54);
-            \chainin (m56) [join=by dspflow];
-            \chainin (m56) [join=by dspflow];
-            \chainin (m76) [join=by dspflow];
-            \chainin (m86) [join=by dspflow];
-            \chainin (m88) [join=by dspflow];
-            \chainin (m56);
-            \chainin (m58) [join=by dspflow];
-            \chainin (m68) [join=by dspflow];
-            \chainin (m78) [join=by dspflow];
-            \chainin (m88) [join=by dspflow];
-            \chainin (m810) [join=by dspflow];
-            \chainin (m58); 
-            \chainin (m510) [join=by dspflow];
-            \chainin (m610) [join=by dspflow];
-            \chainin (m710) [join=by dspflow];
-            \chainin (m810) [join=by dspflow];
-            \chainin (m812) [join=by dspflow];
-            \chainin (m510);
-            \chainin (m512) [join=by dspflow];
-            \chainin (m612) [join=by dspflow];
-            \chainin (m712) [join=by dspflow];
-            \chainin (m812) [join=by dspflow];
-            \chainin (m814) [join=by dspflow];
-            \chainin (m816) [join=by dspflow];
-            \chainin (m512);
-	\end{scope}
-\end{tikzpicture}
-\end{figure}
 
 \bibliographystyle{plain}
 \bibliography{bibliography}

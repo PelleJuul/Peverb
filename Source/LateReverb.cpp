@@ -18,8 +18,8 @@ LateReverb::LateReverb(int sampleRate) :
     allpassCL(0.030, 0.5, sampleRate),
     allpassDL(0.0098, 0.6, sampleRate),
     wrapAL([&] (float x) { return allpassBL.process(allpassAL.process(x)); }),
-    nestedAL(0.035, 0.3, &wrapAL, sampleRate),
-    nestedBL(0.039, 0.3, &allpassDL, sampleRate),
+    nestedAL(0.047, 0.3, &wrapAL, sampleRate),
+    nestedBL(0.0292, 0.3, &allpassDL, sampleRate),
     delayAL(0.005, sampleRate),
     delayBL(0.067, sampleRate),
     delayCL(0.015, sampleRate),
@@ -30,8 +30,8 @@ LateReverb::LateReverb(int sampleRate) :
     allpassCR(0.031, 0.5, sampleRate),
     allpassDR(0.0108, 0.6, sampleRate),
     wrapAR([&] (float x) { return allpassBR.process(allpassAR.process(x)); }),
-    nestedAR(0.036, 0.3, &wrapAR, sampleRate),
-    nestedBR(0.040, 0.3, &allpassDR, sampleRate),
+    nestedAR(0.027, 0.3, &wrapAR, sampleRate),
+    nestedBR(0.0282, 0.3, &allpassDR, sampleRate),
     delayAR(0.006, sampleRate),
     delayBR(0.068, sampleRate),
     delayCR(0.016, sampleRate),
@@ -43,9 +43,12 @@ LateReverb::LateReverb(int sampleRate) :
     feedbackFilterR.setCoefficients(coeff);
 }
 
-void LateReverb::process(float l, float r)
+void LateReverb::process(float t, float l, float r)
 {
     {
+        allpassCL.delayOffset = (0.5 + sin(2 * double_Pi * t * 0.57) / 2) * 0.0005;
+        float gainMod = 0.8 + sin(2 * double_Pi * t * 6.07) * 0.2;
+        // l = l * gainMod;
         float sum1 = l + gain * feedbackFilterL.processSingleSampleRaw(delayDR.read());
         float xNestedA = nestedAL.process(sum1);
         float xAllpassC = delayBL.process(allpassCL.process(delayAL.process(xNestedA)));
@@ -55,6 +58,9 @@ void LateReverb::process(float l, float r)
     }
     
     {
+        allpassCR.delayOffset = (0.5 + sin(2 * double_Pi * t * 0.67) / 2) * 0.0005;
+        float gainMod = 0.8 + sin(2 * double_Pi * t * 6.07) * 0.2;
+        // r = r * gainMod;
         float sum1 = r + gain * feedbackFilterR.processSingleSampleRaw(delayDL.read());
         float xNestedA = nestedAR.process(sum1);
         float xAllpassC = delayBR.process(allpassCR.process(delayAR.process(xNestedA)));
