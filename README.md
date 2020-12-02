@@ -1,10 +1,15 @@
+![A screenshot of the plug-in.](screenshot.png)
+
 # Peverb
 
-This repository contain a (if I may say so myself) rather nice sounding reverb implemented in C++/JUCE.
+This repository contains a (if I may say so myself) rather nice sounding reverb implemented in C++/JUCE.
 
 The reverb algorithm is based on time-varying nested all-pass filters with pre-computed early reflections with some binaural processing.
 
 Just open the project in projucer and everything should compile nicely, except the legacy VST plug-in.
+
+This repository also contains two audio examples: *demo_electric_pino_1.mp3* and *demo_drums_1.mp3*. Both examples starts off without the effect, the effect is then gradually introduced, 
+and lastly the decay is brought up to end with a long reverb tail.
 
 # License
 
