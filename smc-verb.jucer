@@ -10,7 +10,7 @@
               pluginCode="Upbq" pluginChannelConfigs="" pluginIsSynth="0" pluginWantsMidiIn="0"
               pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="NewProjectAU" pluginRTASCategory="" aaxIdentifier="com.yourcompany.SmcVerb"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0">
+              pluginAAXCategory="2" jucerVersion="5.4.7" pluginFormats="buildVST,buildAU,buildStandalone">
   <MAINGROUP id="D1RdPw" name="smc-verb">
     <GROUP id="{61FA2086-5D9F-B47E-0D66-9F489CC1699C}" name="Source">
       <FILE id="KHMX1y" name="Wrap.cpp" compile="1" resource="0" file="Source/Wrap.cpp"/>
@@ -114,4 +114,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>
